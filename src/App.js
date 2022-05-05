@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{Fragment, useState} from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Acti from "./activity";
+import Form from "./Form";
+
+
+function App(){
+  const [acti,setActi]=useState({});
+  const [isLoading,setIsLoading]=useState(true);
+  const[isError,setIsError]=useState({
+    condition:false,
+    message:""
+  });
+  async function sendReq(info){
+    setIsLoading(true);
+    const response=await fetch("http://localhost:5000/",{
+      method:'POST',
+      body:JSON.stringify(info),
+      headers:{
+        'Content-Type':'application/json'
+      }
+    });
+    const data=await response.json()
+    console.log(data);
+    if(Object.keys(data).length===0){
+      setIsError({
+        condition:true,
+        message:"No activity found with the specified parameters"
+      })
+    }
+    else{
+      setActi(data)
+      setIsError({
+        condition:false,
+        message:""
+      })
+    }
+    
+    setIsLoading(false);
+  }
+  return(
+    <Fragment>
+      <Form onAdd={sendReq}/>
+      {!isLoading && !isError.condition && <Acti info={acti}/>}
+      {!isLoading && isError.condition && <p>{isError.message}</p>}
+  
+    </Fragment>
+  )
 }
 
 export default App;
