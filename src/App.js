@@ -13,7 +13,7 @@ function App(){
   });
   async function sendReq(info){
     setIsLoading(true);
-    const response=await fetch("https://triall-deploy.herokuapp.com/",{
+    const response=await fetch("http://triall-deploy.herokuapp.com/",{
       method:'POST',
       body:JSON.stringify(info),
       headers:{
